@@ -1,5 +1,3 @@
-
-
 def test(title, &b)
   begin
     if b
