@@ -38,6 +38,124 @@ end
 # any script that utilizes them (including this test script). Once required
 # all the tests within this suite should pass.
 
+class Artist
+  attr_accessor :name, :songs
+  @@artists = []
+
+  #########
+  # Class #
+  #########
+
+  class << self
+
+    def reset_artists
+      @@artists = []
+    end
+
+    def count
+      @@artists.size
+    end
+
+    def all
+      @@artists
+    end
+  end
+
+
+  ############
+  # Instance #
+  ############
+
+  def initialize
+    @@artists << self
+    @songs = []
+  end
+
+  def songs_count
+    @songs.size
+  end
+
+  def add_song(song)
+    @songs << song   
+  end
+
+  def genres
+    @songs.collect { |song| song.genre }.uniq
+  end
+
+
+end
+###########################
+
+class Song
+  attr_accessor :genre, :name, :artist
+
+  @@songs = []
+
+  class << self
+
+    def count
+      @@songs.size
+    end
+
+    def reset_songs
+      @@songs = []
+    end
+
+    def all
+      @@songs
+    end
+  end
+
+  def initialize
+
+    @@songs << self
+
+  end
+
+end
+
+###########################
+
+class Genre
+  attr_accessor :name
+
+  @@genres = []
+
+  class << self
+
+    def all
+      @@genres
+    end
+    def reset_genres
+      @@genres = []
+    end
+  end
+
+
+  def initialize
+    @@genres << self
+  end
+
+  def songs
+    Song.all.select { |song| !song.genre.nil? && song.genre.name == name}
+  end
+
+  def artists
+    artists = Artist.all.select do |artist| 
+      artist.songs.select do |song|
+        !song.genre.nil? && song.genre.name == name
+      end
+    end
+    artists.uniq
+  end
+
+
+end
+
+###########################
+
+
 # Artist Specs
 test 'Can initialize an Artist' do
   assert Artist.new
@@ -117,6 +235,7 @@ test 'A genre has a name' do
 end
 
 test 'A genre has many songs' do
+  Song.reset_songs
   genre = Genre.new.tap{|g| g.name = 'rap'}
   [1,2].each do
     song = Song.new
@@ -127,6 +246,7 @@ test 'A genre has many songs' do
 end
 
 test 'A genre has many artists' do
+  Artist.reset_artists
   genre = Genre.new.tap{|g| g.name = 'rap'}
 
   [1,2].each do
@@ -140,6 +260,7 @@ test 'A genre has many artists' do
 end
 
 test 'A genres Artists are unique' do
+  Artist.reset_artists
   genre = Genre.new.tap{|g| g.name = 'rap'}
   artist = Artist.new
 
@@ -170,10 +291,30 @@ end
 # without your song class having this functionality, so go ahead and try
 # to use assert and assert_equal to write some tests.
 
-test 'Can initialize a song'
-test 'A song can have a name'
-test 'A song can have a genre'
-test 'A song has an artist'
+test 'Can initialize a song' do
+  assert Song.new
+end
+
+
+test 'A song can have a name' do
+  song = Song.new
+  song.name = "She Rides A Pony"
+  assert_equal song.name, "She Rides A Pony"
+end
+
+
+test 'A song can have a genre' do
+  song = Song.new
+  song.genre = "rap"
+  assert_equal song.genre, "rap"
+end
+
+
+test 'A song has an artist' do
+  song = Song.new
+  song.artist = "Tuff Crew"
+  assert_equal song.artist, "Tuff Crew"
+end
 
 # Part 2: Site Generation Using ERB
 # write a ruby script that parses the data within the data directory
