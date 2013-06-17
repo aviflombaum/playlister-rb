@@ -77,7 +77,8 @@ class Artist
   end
 
   def add_song(song)
-    @songs << song   
+    @songs << song
+    song.genre.artists << self if song.genre && !song.genre.artists.include?(self)
   end
 
   def genres
@@ -106,7 +107,6 @@ class Song
 
     def reset_songs
       @@songs = []
-      @@genres = {}
     end
 
     def all
@@ -130,9 +130,9 @@ class Song
   end
 
   def genre=(genre)
-    @@genres[genre.name] ||= []
-    @@genres[genre.name] << self
-    @genre = genre.name
+    genre.songs << self
+    genre.artists << artist if artist && !genre.artists.include?(artist)
+    @genre = genre
   end
 
 end
@@ -140,7 +140,7 @@ end
 ###########################
 
 class Genre
-  attr_accessor :name
+  attr_accessor :name, :artists, :songs
 
   @@genres = []
 
@@ -164,16 +164,11 @@ class Genre
 
   def initialize
     @@genres << self
+    @songs = []
+    @artists = []
   end
 
-  def songs
-    Song.songs_by_genre(name)
-  end
 
-  def artists
-
-    Song.songs_by_genre(name).collect{|song|song.artist}.uniq
-  end
 
 
 end
@@ -332,14 +327,14 @@ end
 test 'A song can have a genre' do
   song = Song.new
   song.genre = Genre.new.tap{|g|g.name = "rap"}
-  assert_equal song.genre, "rap"
+  assert_equal song.genre.name, "rap"
 end
 
 
 test 'A song has an artist' do
   song = Song.new
-  song.artist = "Tuff Crew"
-  assert_equal song.artist, "Tuff Crew"
+  song.artist = Artist.new.tap{|a|a.name = "Tuff Crew"}
+  assert_equal song.artist.name, "Tuff Crew"
 end
 
 # Part 2: Site Generation Using ERB
