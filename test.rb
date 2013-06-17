@@ -38,6 +38,7 @@ end
 # any script that utilizes them (including this test script). Once required
 # all the tests within this suite should pass.
 
+
 class Artist
   attr_accessor :name, :songs
   @@artists = []
@@ -91,6 +92,11 @@ class Song
   attr_accessor :genre, :name, :artist
 
   @@songs = []
+  @@genres = {}
+
+  #########
+  # Class #
+  #########
 
   class << self
 
@@ -100,17 +106,33 @@ class Song
 
     def reset_songs
       @@songs = []
+      @@genres = {}
     end
 
     def all
       @@songs
     end
+
+    def songs_by_genre(genre)
+      @@genres[genre]
+    end
+
   end
+
+  ############
+  # Instance #
+  ############
 
   def initialize
 
     @@songs << self
 
+  end
+
+  def genre=(genre)
+    @@genres[genre.name] ||= []
+    @@genres[genre.name] << self
+    @genre = genre.name
   end
 
 end
@@ -122,6 +144,10 @@ class Genre
 
   @@genres = []
 
+  #########
+  # Class #
+  #########
+
   class << self
 
     def all
@@ -132,27 +158,25 @@ class Genre
     end
   end
 
+  ############
+  # Instance #
+  ############
 
   def initialize
     @@genres << self
   end
 
   def songs
-    Song.all.select { |song| !song.genre.nil? && song.genre.name == name}
+    Song.songs_by_genre(name)
   end
 
   def artists
-    artists = Artist.all.select do |artist| 
-      artist.songs.select do |song|
-        !song.genre.nil? && song.genre.name == name
-      end
-    end
-    artists.uniq
+
+    Song.songs_by_genre(name).collect{|song|song.artist}.uniq
   end
 
 
 end
-
 ###########################
 
 
@@ -237,6 +261,7 @@ end
 test 'A genre has many songs' do
   Song.reset_songs
   genre = Genre.new.tap{|g| g.name = 'rap'}
+
   [1,2].each do
     song = Song.new
     song.genre = genre
@@ -247,6 +272,7 @@ end
 
 test 'A genre has many artists' do
   Artist.reset_artists
+  Song.reset_songs
   genre = Genre.new.tap{|g| g.name = 'rap'}
 
   [1,2].each do
@@ -305,7 +331,7 @@ end
 
 test 'A song can have a genre' do
   song = Song.new
-  song.genre = "rap"
+  song.genre = Genre.new.tap{|g|g.name = "rap"}
   assert_equal song.genre, "rap"
 end
 
