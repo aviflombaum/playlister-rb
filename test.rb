@@ -42,114 +42,52 @@ end
 class Artist
   attr_accessor :name, :songs
   @@artists = []
-
-  #########
-  # Class #
-  #########
-
   class << self
-
     def reset_artists
       @@artists = []
     end
-
     def count
       @@artists.size
     end
-
     def all
       @@artists
     end
   end
-
-
-  ############
-  # Instance #
-  ############
-
   def initialize
     @@artists << self
     @songs = []
   end
-
   def songs_count
     @songs.size
   end
-
   def add_song(song)
     @songs << song
-    song.genre.artists << self if song.genre && !song.genre.artists.include?(self)
+    song.genre.artists << self unless song.genre.nil? || song.genre.artists.include?(self)
   end
-
   def genres
-    @songs.collect { |song| song.genre }.uniq
+    # @songs.collect { |song| song.genre }.compact.uniq    
+    Genre.all.select{|genre|genre.artists.include?(self)}
   end
-
-
 end
-###########################
-
 class Song
   attr_accessor :genre, :name, :artist
-
   @@songs = []
-  @@genres = {}
-
-  #########
-  # Class #
-  #########
-
-  class << self
-
-    def count
-      @@songs.size
-    end
-
-    def reset_songs
-      @@songs = []
-    end
-
-    def all
-      @@songs
-    end
-
-    def songs_by_genre(genre)
-      @@genres[genre]
-    end
-
+  def self.reset_songs
+    @@songs = []
   end
-
-  ############
-  # Instance #
-  ############
-
   def initialize
-
     @@songs << self
-
   end
-
-  def genre=(genre)
-    genre.songs << self
-    genre.artists << artist if artist && !genre.artists.include?(artist)
-    @genre = genre
+  def genre=(genre_obj)
+    genre_obj.songs << self
+    genre_obj.artists << artist unless artist.nil? || genre_obj.artists.include?(artist)
+    @genre = genre_obj
   end
-
 end
-
-###########################
-
 class Genre
   attr_accessor :name, :artists, :songs
-
   @@genres = []
-
-  #########
-  # Class #
-  #########
-
   class << self
-
     def all
       @@genres
     end
@@ -157,22 +95,12 @@ class Genre
       @@genres = []
     end
   end
-
-  ############
-  # Instance #
-  ############
-
   def initialize
     @@genres << self
     @songs = []
     @artists = []
   end
-
-
-
-
 end
-###########################
 
 
 # Artist Specs
