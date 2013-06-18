@@ -1,4 +1,4 @@
-require 'pry'
+# require 'pry'
 class Artist
   attr_accessor :name, :songs
   @@artists = []
@@ -100,8 +100,41 @@ class Scraper
 
 end
 
+class Jukebox
+
+  @current_screen = 'welcome'
+
+  def start
+    puts welcome_message
+  end
+
+  def welcome_message
+    "Welcome to the Jukebox.\nBrowse by artist or genre"
+  end
+
+
+
+  def help
+    puts <<-HLP
+
+JUKEBOX HELP
+
+# You may type the following commands:
+
+#   - artist
+#       artist will print out a list of available artists, sorted alphabetically.
+#       The artist's song count will be d
+#   - genre
+#       genre will print out a list of available genres.
+
+      HLP
+  end
+
+end
+
 directory = 'data'
 
 Scraper.get_files(directory).each{|mp3_file|Scraper.generate_object(mp3_file)}
 
-binding.pry
+Jukebox.new.start
+
