@@ -28,6 +28,7 @@ class Artist
   end
   def add_song(song)
     @songs << song
+    song.artist = self
     song.genre.artists << self unless song.genre.nil? || song.genre.artists.include?(self)
   end
   def genres
@@ -37,19 +38,15 @@ class Artist
 end
 
 class Song
+
   attr_accessor :genre, :name, :artist, :file_name
-  @@songs = []
-  def self.reset_songs
-    @@songs = []
-  end
-  def initialize
-    @@songs << self
-  end
+
   def genre=(genre_obj)
     genre_obj.songs << self
     genre_obj.artists << artist unless artist.nil? || genre_obj.artists.include?(artist)
     @genre = genre_obj
   end
+
 end
 
 class Genre
@@ -91,10 +88,9 @@ class Scraper
       regex = file.match(/(.*)\[(.+)\]/).to_a
       artist_name, song_name = regex[1].split(' - ').collect(&:strip)
       genre_name = regex.last
-      song = Song.new.tap{|song|song.name = song_name}
+      song = Song.new.tap{|song|song.name = song_name; song.file_name = file}
       artist = Artist.find_by_name(artist_name) || Artist.new.tap{|artist|artist.name = artist_name}
       genre = Genre.find_by_name(genre_name) || Genre.new.tap{|genre|genre.name = genre_name}
-      song.artist = artist
       artist.add_song(song)
       song.genre = genre
     end
@@ -104,6 +100,7 @@ class Scraper
 end
 
 module View
+
   def welcome
     puts "\nWelcome to the Jukebox.\n\nBrowse by artist or genre"
   end
@@ -174,25 +171,24 @@ class Jukebox
       case command
       when 'artists', 'genres'
         @current_screen = command
-        puts command
         send command
       else
         puts "\n'#{command}' not recognized. Please enter 'artists' or 'genres'"
       end
       prompt
     when 'artists'
-      artist = Artist.find_by_name(command)
-      if artist
-        send('artist', artist)
+      artist_obj = Artist.find_by_name(command)
+      if artist_obj
+        artist(artist_obj)
         @current_screen = 'welcome'
       else
         puts "No Artist with the name '#{command}' Found. Please try again!"
       end
       prompt
     when 'genres'
-      genre = Genre.find_by_name(command)
-      if genre
-        send 'genre', genre
+      genre_obj = Genre.find_by_name(command)
+      if genre_obj
+        genre(genre_obj)
         @current_screen = 'welcome'
       else
         puts "No Genre with the name '#{command}' Found. Please try again!"

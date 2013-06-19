@@ -196,7 +196,8 @@ end
 
 test 'A song has an artist' do
   song = Song.new
-  song.artist = Artist.new.tap{|a|a.name = "Tuff Crew"}
+  artist = Artist.new.tap{|a|a.name = "Tuff Crew"}
+  artist.add_song(song)
   assert_equal song.artist.name, "Tuff Crew"
 end
 
