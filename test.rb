@@ -37,6 +37,9 @@ end
 # These files should be placed within a lib directory and required on the top of
 # any script that utilizes them (including this test script). Once required
 # all the tests within this suite should pass.
+require_relative 'lib/artist'
+require_relative 'lib/song'
+require_relative 'lib/genre'
 
 # Artist Specs
 test 'Can initialize an Artist' do
@@ -118,6 +121,7 @@ end
 
 test 'A genre has many songs' do
   genre = Genre.new.tap{|g| g.name = 'rap'}
+
   [1,2].each do
     song = Song.new
     song.genre = genre
@@ -127,6 +131,7 @@ test 'A genre has many songs' do
 end
 
 test 'A genre has many artists' do
+  Artist.reset_artists
   genre = Genre.new.tap{|g| g.name = 'rap'}
 
   [1,2].each do
@@ -140,6 +145,7 @@ test 'A genre has many artists' do
 end
 
 test 'A genres Artists are unique' do
+  Artist.reset_artists
   genre = Genre.new.tap{|g| g.name = 'rap'}
   artist = Artist.new
 
@@ -170,10 +176,50 @@ end
 # without your song class having this functionality, so go ahead and try
 # to use assert and assert_equal to write some tests.
 
-test 'Can initialize a song'
-test 'A song can have a name'
-test 'A song can have a genre'
-test 'A song has an artist'
+test 'Can initialize a song' do
+  assert Song.new
+end
+
+
+# test 'A song can have a name' do
+#   song = Song.new
+#   song.name = "She Rides A Pony"
+#   assert_equal song.name, "She Rides A Pony"
+# end
+
+
+test 'A song can have a genre' do
+  song = Song.new
+  song.genre = Genre.new.tap{|g|g.name = "rap"}
+  assert_equal song.genre.name, "rap"
+end
+
+
+test 'A song has an artist' do
+  song = Song.new
+  artist = Artist.new.tap{|a|a.name = "Tuff Crew"}
+  artist.add_song(song)
+  assert_equal song.artist.name, "Tuff Crew"
+end
+
+# Edge cases that Avi doesn't cover
+test 'Artists keep accurate count of how many genres they have' do
+  artist = Artist.new
+  s1 = Song.new.tap{|s|s.genre = Genre.new}
+  s2 = Song.new
+  [s1,s2].each{|s|artist.add_song(s)}
+  assert_equal artist.genres.count, 1
+end
+
+test "Genres keep accurate count of their artists" do
+  Artist.reset_artists
+  genre = Genre.new.tap{|g| g.name = 'rap'}
+  artist = Artist.new
+  s1 = Song.new.tap{|s|s.genre = genre}
+  s2 = Song.new.tap{|s|s.genre = genre}
+  artist.add_song(s1)
+  assert_equal genre.artists.count, 1
+end
 
 # Part 2: Site Generation Using ERB
 # write a ruby script that parses the data within the data directory
