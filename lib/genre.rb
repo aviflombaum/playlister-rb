@@ -1,23 +1,30 @@
 class Genre
   attr_accessor :name, :songs
 
-  All = []
+  extend Memorable::ClassMethods
+  extend Findable
+  extend Listable
 
-  def initialize
-  #   @songs = []
-    All << self
+  include Memorable::InstanceMethods
+
+  def self.action(index)
+    self.all[index-1].list_songs
+  end
+
+  def list_songs
+    Song.all.each_with_index do |s, index|
+      puts "#{index+1}. #{s.name}" if s.genre == self
+    end
   end
 
   def self.reset_genres
-    All.clear
+    reset_all
   end
+  reset_genres
 
-  def self.all
-    All
-  end
-
-  def songs
-    @songs ||= []
+  def initialize
+    super
+    @songs = []
   end
 
   def artists
