@@ -13,9 +13,9 @@ class Scraper
     end
 
     def generate_object(file)
-      regex = file.match(/(.*)\[(.+)\]/).to_a
-      artist_name, song_name = regex[1].split(' - ').collect(&:strip)
-      genre_name = regex.last
+      regex = file.match(/(?<artist_song>.*)\[(?<genre>.+)\]/)
+      artist_name, song_name = regex[:artist_song].split(' - ').collect(&:strip)
+      genre_name = regex[:genre]
       song = Song.new.tap{|song|song.name = song_name; song.file_name = file}
       artist = Artist.find_by_name(artist_name) || Artist.new.tap{|artist|artist.name = artist_name}
       genre = Genre.find_by_name(genre_name) || Genre.new.tap{|genre|genre.name = genre_name}

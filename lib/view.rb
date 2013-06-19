@@ -3,6 +3,7 @@ module View
   def welcome
     puts "\nWelcome to the Jukebox.\n\nBrowse by artist or genre"
   end
+
   def artists
     puts "All artists (with song count)"
     Artist.all.sort_by{|a|a.name.downcase}.each do |artist|
@@ -11,6 +12,7 @@ module View
     puts "\nTotal Artists: #{Artist.all.count}"
     puts "\nSelect Artist"
   end
+
   def artist(artist)
     puts "\n#{artist.name} - #{artist.songs.count} Song#{'s' if artist.songs.count != 1}"
     artist.songs.each_with_index do |song, index|
@@ -19,6 +21,7 @@ module View
     end
     puts "\n\nBrowse by artist or genre"
   end
+
   def genres
     puts "All genres, with song and artist count\n"
     Genre.all.sort_by{|g|g.songs.count}.each do |genre|
@@ -27,6 +30,7 @@ module View
     puts "\nTotal Genres: #{Genre.all.count}"
     puts "\nSelect Genre"
   end
+
   def genre(genre)
     puts "\nIn #{genre.name.capitalize}:\n"
     genre.songs.each do |song|
@@ -35,6 +39,7 @@ module View
     puts "\n#{genre.name.capitalize} has #{genre.songs.count} song#{'s' if genre.songs.count != 1} and #{genre.artists.count} unique artist#{'s' if genre.artists.count != 1}."
     puts "\n\nBrowse by artist or genre"
   end
+
   def song(song)
   end
 
