@@ -1,34 +1,34 @@
 class Artist
   attr_accessor :name, :songs
-  All = []
-
+  @@artists = []
+  class << self
+    def reset_artists
+      @@artists = []
+    end
+    def count
+      @@artists.size
+    end
+    def all
+      @@artists
+    end
+    def find_by_name(name)
+      @@artists.select{|artist|artist.name.downcase == name.downcase}.first
+    end
+  end
   def initialize
-    All << self
+    @@artists << self
     @songs = []
   end
-
-  def genres
-    songs.collect{|s| s.genre}.uniq
-  end
-
-  def self.reset_artists
-    All.clear
-  end
-
-  def self.all
-    All
-  end
-
   def songs_count
-    songs.size
+    @songs.size
   end
-
-  def self.count
-    All.size
-  end
-
   def add_song(song)
-    songs << song
+    @songs << song
     song.artist = self
+    song.genre.artists << self unless song.genre.nil? || song.genre.artists.include?(self)
+  end
+  def genres
+    # @songs.collect { |song| song.genre }.compact.uniq
+    Genre.all.select{|genre|genre.artists.include?(self)}
   end
 end

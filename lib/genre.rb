@@ -1,27 +1,20 @@
 class Genre
-  attr_accessor :name, :songs
-
-  All = []
-
+  attr_accessor :name, :artists, :songs
+  @@genres = []
+  class << self
+    def all
+      @@genres
+    end
+    def reset_genres
+      @@genres = []
+    end
+    def find_by_name(name)
+      @@genres.select{|genre|genre.name.downcase == name.downcase}.first
+    end
+  end
   def initialize
-  #   @songs = []
-    All << self
+    @@genres << self
+    @songs = []
+    @artists = []
   end
-
-  def self.reset_genres
-    All.clear
-  end
-
-  def self.all
-    All
-  end
-
-  def songs
-    @songs ||= []
-  end
-
-  def artists
-    songs.collect{|s| s.artist}.uniq
-  end
-
 end
