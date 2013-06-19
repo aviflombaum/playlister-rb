@@ -35,22 +35,14 @@ class Jukebox
         puts "\n'#{command}' not recognized. Please enter 'artists' or 'genres'"
       end
       prompt
-    when 'artists'
-      artist_obj = Artist.find_by_name(command)
-      if artist_obj
-        artist(artist_obj)
+    when 'artists', 'genres'
+      obj_name = @current_screen[0..-2]
+      obj = Object.const_get(obj_name.capitalize).find_by_name(command)
+      if obj
+        send obj_name, obj
         @current_screen = 'welcome'
       else
-        puts "No Artist with the name '#{command}' Found. Please try again!"
-      end
-      prompt
-    when 'genres'
-      genre_obj = Genre.find_by_name(command)
-      if genre_obj
-        genre(genre_obj)
-        @current_screen = 'welcome'
-      else
-        puts "No Genre with the name '#{command}' Found. Please try again!"
+        puts "No #{obj_name} with the name '#{command}' Found. Please try again!"
       end
       prompt
     end
