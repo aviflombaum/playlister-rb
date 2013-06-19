@@ -1,4 +1,7 @@
 # require 'pry'
+# require 'active_support/inflector'
+
+
 class Artist
   attr_accessor :name, :songs
   @@artists = []
@@ -13,7 +16,7 @@ class Artist
       @@artists
     end
     def find_by_name(name)
-      @@artists.select{|artist|artist.name == name}.first
+      @@artists.select{|artist|artist.name.downcase == name.downcase}.first
     end
   end
   def initialize
@@ -60,7 +63,7 @@ class Genre
       @@genres = []
     end
     def find_by_name(name)
-      @@genres.select{|genre|genre.name == name}.first
+      @@genres.select{|genre|genre.name.downcase == name.downcase}.first
     end
   end
   def initialize
@@ -100,34 +103,102 @@ class Scraper
 
 end
 
+module View
+  def welcome
+    puts "\nWelcome to the Jukebox.\n\nBrowse by artist or genre"
+  end
+  def artists
+    puts "All artists (with song count)"
+    Artist.all.sort_by{|a|a.name.downcase}.each do |artist|
+      puts "#{artist.name} (#{artist.songs.count})"
+    end
+    puts "\nTotal Artists: #{Artist.all.count}"
+    puts "\nSelect Artist"
+  end
+  def artist(artist)
+    puts "\n#{artist.name} - #{artist.songs.count} Song#{'s' if artist.songs.count != 1}"
+    artist.songs.each_with_index do |song, index|
+      print "\n#{index+1}: #{song.name}"
+      print " - #{song.genre.name}" if song.genre
+    end
+    puts "\n\nBrowse by artist or genre"
+  end
+  def genres
+    puts "All genres, with song and artist count\n"
+    Genre.all.sort_by{|g|g.songs.count}.each do |genre|
+      puts "#{genre.name.capitalize}: #{genre.songs.count} Song#{'s' if genre.songs.count != 1}, #{genre.artists.count} Artist#{'s' if genre.artists.count != 1}"
+    end
+    puts "\nTotal Genres: #{Genre.all.count}"
+    puts "\nSelect Genre"
+  end
+  def genre(genre)
+    puts "\nIn #{genre.name.capitalize}:\n"
+    genre.songs.each do |song|
+      puts "#{song.artist.name} - #{song.name}"
+    end
+    puts "\n#{genre.name.capitalize} has #{genre.songs.count} song#{'s' if genre.songs.count != 1} and #{genre.artists.count} unique artist#{'s' if genre.artists.count != 1}."
+    puts "\n\nBrowse by artist or genre"
+  end
+  def song(song)
+  end
+
+  def exit
+    puts "Thank you for using this program!"
+  end
+
+end
+
 class Jukebox
 
-  @current_screen = 'welcome'
+  include View
 
   def start
-    puts welcome_message
+    @current_screen = 'welcome'
+    welcome
+    prompt
   end
 
-  def welcome_message
-    "Welcome to the Jukebox.\nBrowse by artist or genre"
+
+  def prompt
+    print ">>> "
+    command = gets.strip
+    route(command)
   end
 
+  def route(command)
 
+    return send command if command == 'exit'
 
-  def help
-    puts <<-HLP
-
-JUKEBOX HELP
-
-# You may type the following commands:
-
-#   - artist
-#       artist will print out a list of available artists, sorted alphabetically.
-#       The artist's song count will be d
-#   - genre
-#       genre will print out a list of available genres.
-
-      HLP
+    case @current_screen
+    when 'welcome'
+      case command
+      when 'artists', 'genres'
+        @current_screen = command
+        puts command
+        send command
+      else
+        puts "\n'#{command}' not recognized. Please enter 'artists' or 'genres'"
+      end
+      prompt
+    when 'artists'
+      artist = Artist.find_by_name(command)
+      if artist
+        send('artist', artist)
+        @current_screen = 'welcome'
+      else
+        puts "No Artist with the name '#{command}' Found. Please try again!"
+      end
+      prompt
+    when 'genres'
+      genre = Genre.find_by_name(command)
+      if genre
+        send 'genre', genre
+        @current_screen = 'welcome'
+      else
+        puts "No Genre with the name '#{command}' Found. Please try again!"
+      end
+      prompt
+    end
   end
 
 end
