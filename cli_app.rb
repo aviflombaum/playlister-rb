@@ -2,7 +2,7 @@ require 'pry-debugger'
 
 require_relative 'environment'
 
-class PlaylisterApp
+class CLIPlaylisterApp
   def run
     parser = LibraryParser.new('/Users/avi/Development/code/playlister-rb/data')
     parser.call

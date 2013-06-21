@@ -2,5 +2,5 @@
 
 require_relative '../app'
 
-app = PlaylisterApp.new
+app = CLIPlaylisterApp.new
 app.run

@@ -7,6 +7,10 @@ class Song
 
   reset_all
 
+  def url
+    "#{self.name}.html"
+  end
+
   def self.action(index)
     self.all[index-1].play
   end

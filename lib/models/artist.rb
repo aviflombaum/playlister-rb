@@ -31,6 +31,10 @@ class Artist
     songs.collect{|s| s.genre}.flatten.compact.uniq
   end
 
+  def url
+    "#{name.downcase.strip}.html"
+  end
+
   def songs_count
     songs.size
   end
