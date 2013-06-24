@@ -22,6 +22,10 @@ class Genre
   end
   reset_genres
 
+  def url
+    "#{name.downcase.strip}.html"
+  end
+
   def initialize
     super
     @songs = []

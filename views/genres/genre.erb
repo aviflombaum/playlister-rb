@@ -1,0 +1,12 @@
+<h1><%= genre.name %></h1>
+
+<p><a href="/index.html">Back to Index</a></p>
+
+<b>Songs:</b>
+<ul>
+  <% genre.songs.each do |song| %>
+  <li><a href="/songs/<%= song.url %>"><%= song.name %></a></li>
+  <% end %>
+</ul>
+
+<p><a href="/index.html">Back to Index</a>
