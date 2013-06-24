@@ -37,12 +37,12 @@ end
 # These files should be placed within a lib directory and required on the top of
 # any script that utilizes them (including this test script). Once required
 # all the tests within this suite should pass.
-require_relative 'lib/memorable'
-require_relative 'lib/listable'
-require_relative 'lib/findable'
-require_relative 'lib/artist'
-require_relative 'lib/song'
-require_relative 'lib/genre'
+require_relative '../lib/concerns/memorable'
+require_relative '../lib/concerns/listable'
+require_relative '../lib/concerns/findable'
+require_relative '../lib/models/artist'
+require_relative '../lib/models/song'
+require_relative '../lib/models/genre'
 
 
 # Artist Specs
