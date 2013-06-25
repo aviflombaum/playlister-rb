@@ -1,0 +1,11 @@
+<h1>My Songs</h1>
+
+<p><a href="/">Back to Index</a></p>
+
+<ul>
+<% @songs.each do |song| %>
+  <li><a href="/songs/<%= song.url %>"><%= song.name %></a></li>
+<% end %>
+</ul>
+
+<p><a href="/">Back to Index</a></p>

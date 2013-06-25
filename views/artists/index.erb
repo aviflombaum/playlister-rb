@@ -1,11 +1,11 @@
 <h1>Browsing Artists</h1>
 
-<p><a href="/index.html">Back to Index</a>
+<p><a href="/">Back to Index</a>
 
 <ul>
-<% artists.each do |artist| %>
+<% @artists.each do |artist| %>
   <li><a href="/artists/<%= artist.url %>"><%= artist.name %></a></li>
 <% end %>
 </ul>
 
-<p><a href="/index.html">Back to Index</a>
+<p><a href="/">Back to Index</a>
