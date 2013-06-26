@@ -1,9 +1,14 @@
 class Song
   attr_accessor :artist, :genre, :name
-  extend Memorable::ClassMethods
-  extend Listable
 
+  extend Memorable::ClassMethods
   include Memorable::InstanceMethods
+
+  extend Sluggable::ClassMethods
+  include Sluggable::InstanceMethods
+
+  extend Listable
+  extend Findable
 
   reset_all
 
@@ -27,4 +32,9 @@ class Song
     @genre = genre
     genre.songs << self
   end
+
+  def to_param
+    self.slug
+  end
+
 end

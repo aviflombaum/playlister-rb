@@ -2,10 +2,13 @@ class Artist
   attr_accessor :name, :songs
 
   extend Memorable::ClassMethods
-  extend Findable
-  extend Listable
-
   include Memorable::InstanceMethods
+
+  extend Sluggable::ClassMethods
+  include Sluggable::InstanceMethods
+
+  extend Listable
+  extend Findable
 
   def self.reset_artists
     reset_all
@@ -42,5 +45,9 @@ class Artist
   def add_song(song)
     songs << song
     song.artist = self
+  end
+
+  def to_param
+    self.slug
   end
 end

@@ -2,10 +2,13 @@ class Genre
   attr_accessor :name, :songs
 
   extend Memorable::ClassMethods
-  extend Findable
-  extend Listable
-
   include Memorable::InstanceMethods
+
+  extend Sluggable::ClassMethods
+  include Sluggable::InstanceMethods
+
+  extend Listable
+  extend Findable
 
   def self.action(index)
     self.all[index-1].list_songs
@@ -33,6 +36,10 @@ class Genre
 
   def artists
     songs.collect{|s| s.artist}.uniq
+  end
+
+  def to_param
+    self.slug
   end
 
 end

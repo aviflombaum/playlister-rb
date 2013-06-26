@@ -4,7 +4,7 @@
 
 <ul>
 <% @artists.each do |artist| %>
-  <li><a href="/artists/<%= artist.url %>"><%= artist.name %></a></li>
+  <li><a href="/artists/<%= artist.to_param %>"><%= artist.name %></a></li>
 <% end %>
 </ul>
 

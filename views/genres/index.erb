@@ -4,7 +4,7 @@
 
 <ul>
 <% @genres.each do |genre| %>
-  <li><a href="/genres/<%= genre.url %>"><%= genre.name %></a></li>
+  <li><a href="/genres/<%= genre.to_param %>"><%= genre.name %></a></li>
 <% end %>
 </ul>
 
