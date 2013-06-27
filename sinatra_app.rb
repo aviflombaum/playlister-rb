@@ -1,6 +1,9 @@
 class PlaylisterApp < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
+    also_reload './environment'
+    also_reload './lib/concerns/memorable.rb'
+    also_reload './lib/models/artist.rb'
   end
 
   get '/' do
@@ -22,19 +25,30 @@ class PlaylisterApp < Sinatra::Base
     erb :'genres/index'
   end
 
-  get '/genres/:slug' do |slug|
-    @genre = Genre.find_by_slug(slug)
+  get '/genres/:slug' do
+    @genre = Genre.find_by_slug(params[:slug])
     erb :'genres/show'
   end
 
-  get '/songs/:slug' do |slug|
-    @song = Song.find_by_slug(slug)
+  post '/songs' do
+    # {"song_title"=>"SONG NAME", "artist_id"=>"ARTIST ID", "genre"=>"GENRE"}
+    song = Song.new_from_params(params)
+    redirect "/songs/#{song.to_param}"
+  end
+
+  get '/songs/new' do
+    erb :'songs/new'
+  end
+
+  get '/songs/:slug' do
+    @song = Song.find_by_slug(params[:slug])
     erb :'songs/show'
   end
 
-  get '/artists/:slug' do |slug|
-    @artist = Artist.find_by_slug(slug)
+  get '/artists/:slug' do
+    @artist = Artist.find_by_slug(params[:slug])
     erb :'artists/show'
   end
+
 
 end

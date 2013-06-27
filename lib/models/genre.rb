@@ -25,9 +25,9 @@ class Genre
   end
   reset_genres
 
-  def url
-    "#{name.downcase.strip}.html"
-  end
+  # def url
+  #   "#{name.downcase.strip}.html"
+  # end
 
   def initialize
     super
@@ -36,10 +36,6 @@ class Genre
 
   def artists
     songs.collect{|s| s.artist}.uniq
-  end
-
-  def to_param
-    self.slug
   end
 
 end

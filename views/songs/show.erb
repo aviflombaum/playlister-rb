@@ -1,3 +1,5 @@
-<h1><%= @song.name %></h1>
+<h1><a href="/artists/<%= @song.artist.to_param %>"><%= @song.artist.name %></a> - <%= @song.name %></h1>
+
+<iframe src="http://youtube.com/embed/<%= @song.youtube["video_id"] %>"></iframe>
 
 <p><a href="/">Back to Index</a></p>
