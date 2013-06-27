@@ -45,6 +45,27 @@ class PlaylisterApp < Sinatra::Base
     erb :'songs/show'
   end
 
+  get '/artists/new' do
+    erb :'artists/new'
+  end
+
+  get '/simple' do
+    erb :simple
+  end
+
+  post '/simple' do
+    raise params.inspect
+  end
+
+  post '/artists' do
+    artist = Artist.new
+
+    artist.name = params[:artist_name]
+    artist.add_songs(params[:songs])
+
+    redirect "/artists/#{artist.to_param}"
+  end
+
   get '/artists/:slug' do
     @artist = Artist.find_by_slug(params[:slug])
     erb :'artists/show'

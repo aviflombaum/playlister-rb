@@ -10,6 +10,16 @@ class Artist
   extend Listable
   extend Findable
 
+  def add_songs(songs)
+    songs.each do |song_hash|
+      puts song_hash
+      s = Song.new
+      s.genre = Genre.find_or_create_by_name(song_hash[:genre])
+      s.name = song_hash[:name]
+      self.add_song(s)
+    end
+  end
+
   def self.reset_artists
     reset_all
   end
